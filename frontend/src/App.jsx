@@ -40,9 +40,9 @@ import API from "./api";
 function App() {
   const [workouts, setWorkouts] = useState([]);
   const [form, setForm] = useState({ title: "", load: "", reps: "" });
-  const [editing, setEditing] = useState(null); // track if updating a workout
+  const [editing, setEditing] = useState(null);
 
-  // Fetch all workouts
+  // Fetch workouts from the backend
   const fetchWorkouts = async () => {
     try {
       const res = await API.get("/");
@@ -99,78 +99,91 @@ function App() {
   };
 
   return (
-    <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>Workout Tracker 🏋🏽‍♂️</h1>
+    <div className="min-h-screen flex flex-col items-center py-10 px-4">
+      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
+        <h1 className="text-2xl font-bold text-center mb-6">
+          Workout Tracker 🏋🏽‍♂️
+        </h1>
 
-      {/* Form */}
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "0.5rem",
-          maxWidth: "300px",
-        }}
-      >
-        <input
-          type="text"
-          name="title"
-          placeholder="Workout title"
-          value={form.title}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="number"
-          name="load"
-          placeholder="Load (kg)"
-          value={form.load}
-          onChange={handleChange}
-        />
-        <input
-          type="number"
-          name="reps"
-          placeholder="Reps"
-          value={form.reps}
-          onChange={handleChange}
-        />
-        <button type="submit">
-          {editing ? "Update Workout" : "Add Workout"}
-        </button>
-      </form>
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-3 mb-6"
+        >
+          <input
+            type="text"
+            name="title"
+            placeholder="Workout title"
+            value={form.title}
+            onChange={handleChange}
+            required
+            className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          />
+          <input
+            type="number"
+            name="load"
+            placeholder="Load (kg)"
+            value={form.load}
+            onChange={handleChange}
+            className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          />
+          <input
+            type="number"
+            name="reps"
+            placeholder="Reps"
+            value={form.reps}
+            onChange={handleChange}
+            className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          />
+          <button
+            type="submit"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition"
+          >
+            {editing ? "Update Workout" : "Add Workout"}
+          </button>
+        </form>
 
-      <hr style={{ margin: "1.5rem 0" }} />
-
-      {/* Workout list */}
-      {workouts.length > 0 ? (
-        <ul style={{ listStyle: "none", padding: 0 }}>
-          {workouts.map((w) => (
-            <li
-              key={w._id}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "0.5rem",
-                borderBottom: "1px solid #ddd",
-              }}
-            >
-              <div>
-                <strong>{w.title}</strong> — {w.reps} reps, {w.load} kg
+        {/* Workout List */}
+        <div className="space-y-3">
+          {workouts.length > 0 ? (
+            workouts.map((w) => (
+              <div
+                key={w._id}
+                className="p-4 bg-gray-50 rounded-xl shadow-sm flex justify-between items-center"
+              >
+                <div>
+                  <p className="font-semibold text-gray-800">{w.title}</p>
+                  <p className="text-sm text-gray-600">
+                    {w.reps} reps • {w.load} kg
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleEdit(w)}
+                    className="text-sm px-2 py-1 bg-yellow-400 hover:bg-yellow-500 rounded text-white"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(w._id)}
+                    className="text-sm px-2 py-1 bg-red-500 hover:bg-red-600 rounded text-white"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-              <div>
-                <button onClick={() => handleEdit(w)}>Edit</button>{" "}
-                <button onClick={() => handleDelete(w._id)}>Delete</button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No workouts yet...</p>
-      )}
+            ))
+          ) : (
+            <p className="text-center text-gray-500">
+              No workouts yet... start by adding one!
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
 
 export default App;
+
 
